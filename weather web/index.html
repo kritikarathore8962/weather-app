@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weather web</title>
+    <link rel="icon" href="Assets/clouds.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="Enter city name" spellcheck="false">
+            <button id="submit"><img src="Assets/search.png" alt=""></button>
+        </div>
+        <div class="weather">
+            <img src="Assets/rain.png" alt="">
+            <h1 class="temp">22°c</h1> <br>
+            <h2 class="city">INDORE</h2>
+
+            <div class="details">
+                <div class="col">
+                    <img src="Assets/humidity.png" alt="">
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="Assets/wind.png" alt="">
+                    <div>
+                        <p class="wind">15 km/hr</p>
+                        <p>Wind speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+           
+
+            const apiKey = '29995d8819msh0d9e7ac5c4a2d50p19fea9jsnc01c8787e654';
+            const apiUrl = 'https://weather-by-api-ninjas.p.rapidapi.com/v1/weather?city=';
+
+            const searchBox = document.querySelector('.search input');
+            const searchBtn = document.querySelector('.search button');
+            const weatherIcon = document.querySelector('.weather img');
+
+            async function checkWeather(city) {
+                try {
+                    const response = await fetch(apiUrl + city, {
+                        method: 'GET',
+                        headers: {
+                            'X-RapidAPI-Key': apiKey,
+                            'X-RapidAPI-Host': 'weather-by-api-ninjas.p.rapidapi.com',
+                        },
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log(data);
+
+                        document.querySelector(".city").innerHTML = city.toUpperCase();
+                        document.querySelector(".temp").innerHTML = data.min_temp + "°C";
+                        document.querySelector(".humidity").innerHTML = data.humidity + "%";
+                        document.querySelector(".wind").innerHTML = data.wind_speed + "km/h";
+
+                        if (data.weather[0] == "Clouds") {
+                            weatherIcon.src = "assets/clouds.png";
+                        } else if (data.weather[0] == "Rain") {
+                            weatherIcon.src = "assets/rain.png";
+                        } else if (data.weather[0] == "Drizzle") {
+                            weatherIcon.src = "assets/drizzle.png";
+                        } else if (data.weather[0] == "Mist") {
+                            weatherIcon.src = "assets/mist.png";
+                            document.querySelector(".weather").style.display = "block";
+                        }
+                    } else {
+                        console.error('Error fetching weather data:', response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error fetching weather data:', error);
+                }
+            }
+
+            searchBtn.addEventListener('click', () => {
+                checkWeather(searchBox.value);
+            });
+
+        </script>
+</body>
+
+</html>
